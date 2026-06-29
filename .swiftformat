@@ -1,0 +1,15 @@
+# myArchive SwiftFormat 설정 — PostToolUse가 파일 저장 직후 자동 교정
+--swiftversion 5.9
+--indent 4
+--maxwidth 120
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--self remove
+--importgrouping testable-bottom
+--commas inline
+--trimwhitespace always
+--semicolons never
+--header strip
+--disable redundantSelf,wrapMultilineStatementBraces,wrapPropertyBodies
+--exclude DerivedData,.build,myArchive.xcodeproj

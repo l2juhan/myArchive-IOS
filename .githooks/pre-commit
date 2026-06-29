@@ -1,0 +1,35 @@
+#!/bin/bash
+# pre-commit 게이트 — commit 시점.
+# 1) 작업중 exec-plan이 함께 스테이징됐는지 검사(코드만 커밋되고 계획이 안 따라오는 drift 방지).
+# 2) 스테이징된 .swift 파일에 SwiftLint(차단 규칙) 통과 여부 검사.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 1
+
+staged=$(git diff --cached --name-only)
+
+# (1) exec-plan 스테이징 검사 — 코드 변경이 있는데 exec-plan이 없으면 경고/차단
+code_changed=$(printf '%s\n' "$staged" | grep -E '^myArchive/.*\.swift$' || true)
+plan_staged=$(printf '%s\n' "$staged" | grep -E '^docs/exec-plans/.*\.md$' || true)
+plans_exist=$(find docs/exec-plans -name '*.md' ! -name '.gitkeep' 2>/dev/null | head -1)
+
+if [ -n "$code_changed" ] && [ -n "$plans_exist" ] && [ -z "$plan_staged" ]; then
+  echo "[pre-commit] 코드가 변경됐지만 작업중 exec-plan이 스테이징되지 않았습니다." >&2
+  echo "             exec-plan-sync로 진행을 계획에 반영하고 함께 커밋하세요 (docs/exec-plans/)." >&2
+  exit 1
+fi
+
+# (2) 스테이징된 Swift에 대한 SwiftLint 차단 규칙
+if command -v swiftlint >/dev/null 2>&1 && [ -n "$code_changed" ]; then
+  if ! swiftlint lint --quiet --strict 2>/dev/null | grep -q . ; then
+    : # 위반 없음
+  fi
+  # error 심각도(보안 커스텀 규칙 포함) 위반이 있으면 차단
+  if swiftlint lint --quiet 2>/dev/null | grep -q "error:"; then
+    echo "[pre-commit] SwiftLint error 위반이 있습니다. 수정 후 다시 커밋하세요." >&2
+    swiftlint lint --quiet 2>/dev/null | grep "error:" >&2
+    exit 1
+  fi
+fi
+
+exit 0
