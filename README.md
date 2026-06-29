@@ -1,37 +1,25 @@
-# myArchive — iOS
+# myArchive
 
-빠르고 가벼운 **로컬 전용 iOS 비밀번호 관리 앱**. Swift · SwiftUI · iOS 17+ · SwiftData(메타) · Keychain(시크릿, 방식 B) · LocalAuthentication · MVVM. 외부 라이브러리 없음.
+빠르고 가벼운 **로컬 전용 iOS 비밀번호 관리 앱**.
 
-## 시작하기
+메모장에 평문으로 적어두던 계정 정보를, 1~2초 안에 검색하고 · 필드별로 한 번에 복사하고 · 필요한 값만 터치로 드러내며 · 선택적 앱 잠금으로 안전하게 다루기 위한 앱이다. PC방·자동완성이 안 되는 사이트·수동 로그인이 필요한 모바일 앱처럼 "급하게 계정 정보를 꺼내 써야 하는" 순간에 빠르게 찾아 쓰는 데 초점을 맞췄다.
 
-```bash
-brew install xcodegen swiftlint swiftformat   # 도구 (최초 1회)
-xcodegen generate                             # project.yml → myArchive.xcodeproj 생성
-open myArchive.xcodeproj                       # Xcode에서 실행
-```
+## 화면
 
-`.xcodeproj`는 `project.yml`에서 생성되며 git으로 추적하지 않는다. 소스/설정 변경 후 `xcodegen generate`로 재생성한다.
+| 잠금 | 메인 목록 | 상세 | 추가·수정 | 설정 |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/references/screenshots/01-lock-screen.png" width="160" alt="잠금 화면"> | <img src="docs/references/screenshots/02-main-list.png" width="160" alt="메인 목록"> | <img src="docs/references/screenshots/03-detail.png" width="160" alt="상세"> | <img src="docs/references/screenshots/04-add-edit.png" width="160" alt="추가·수정"> | <img src="docs/references/screenshots/05-settings.png" width="160" alt="설정"> |
 
-## 프로젝트 구조
+## 핵심 기능
 
-```
-myArchive/         앱 소스 (App · DesignSystem · Models · Services · ViewModels · Views · Resources)
-myArchiveTests/    단위 테스트
-docs/              제품/설계 문서 (매니페스트는 CLAUDE.md)
-.claude/           Claude Code 하네스 (agents · skills · commands · hooks)
-.githooks/         git 게이트 (pre-commit · pre-push)
-```
+- **빠른 검색** — 서비스명·아이디 실시간 부분 일치 검색.
+- **필드별 복사** — 아이디·비밀번호·커스텀 필드를 각각 따로 복사, 복사한 값은 일정 시간 뒤 클립보드에서 자동 삭제.
+- **터치 마스킹 해제** — 시크릿 값은 기본 블러, 필요한 필드만 터치해서 확인(이탈 시 자동 재마스킹).
+- **사용자 정의 필드** — 2차 비밀번호·보안 질문 등 계정마다 필요한 항목을 자유롭게 추가.
+- **암호화 로컬 저장** — 비밀번호·민감 값은 기기 Keychain에 저장(평문 저장 없음). 완전 오프라인, 네트워크 사용 안 함.
+- **선택적 앱 잠금** — Face ID / 기기 암호로 앱 진입을 잠글 수 있음(기본 꺼짐).
+- **즐겨찾기·정렬·계정 색상** — 자주 쓰는 계정을 위로, 계정마다 식별용 색 지정.
 
-자세한 구조는 `docs/folder-structure.md`, 제품 요구사항은 `docs/references/MyArchive_PRD_v0.5.md`, 디자인은 `docs/references/Design.md` 참조.
+## 기술 스택
 
-## 개발 하네스
-
-작업은 에이전트 팀(`myarchive-ui`/`-logic`/`-qa`)으로 처리하며, edit→commit→review→push→pr→merge 각 시점에 훅(게이트)과 스킬(워커)이 한 쌍으로 동작한다. 규칙·승인 게이트는 `CLAUDE.md` 참조.
-
-- 기능 구현: "myArchive ○○ 구현해" → `myarchive-orchestrator`가 팀 조율
-- 점검: `/health` `/quality` `/review` `/gc` `/docs-sync`
-
-## 마일스톤 (PRD 12장)
-
-M1 UI 골격 → M2 메타 영속화 → M3 시크릿 저장 → M4 잠금/설정 → M5 보안 마감 → M6 폴리싱.
-현재: 빌드 가능한 골격(디자인 토큰·데이터 모델·서비스·화면 스텁) 완성, 타입체크/lint 통과.
+Swift · SwiftUI · iOS 17+ · SwiftData · Keychain · LocalAuthentication. 외부 라이브러리 없음, 라이트 모드 전용(v1).
