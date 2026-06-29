@@ -19,5 +19,5 @@
 
 ## 분기
 
-- base는 **`develop`**(통합). `main`은 배포 전용 — 릴리스 때만 올린다.
+- base는 **`main`**(단일 통합 브랜치). 작업 브랜치에서 PR을 올린다. 릴리스는 main에서 태그로 표시.
 - 글로벌 규칙: 커밋·PR 본문에 `Co-Authored-By:`나 "🤖 Generated with Claude Code"를 넣지 않는다.

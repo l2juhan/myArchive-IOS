@@ -5,11 +5,11 @@ description: "문서 동기화를 확인하고 exec-plan을 지운 뒤 PR을 squ
 
 # merge
 
-작업을 `develop`(통합 브랜치)에 합치고 흔적을 정리한다. 머지는 **되돌리기 어려운 외부 행위**라 동기화 확인 → exec-plan 삭제 → 승인(승인 게이트 5) → squash 순으로만 진행한다. (`main`은 배포 전용이라 릴리스 때만 별도로 올린다 — CLAUDE.md 분기 전략.)
+작업을 `main`(통합 브랜치)에 합치고 흔적을 정리한다. 머지는 **되돌리기 어려운 외부 행위**라 동기화 확인 → exec-plan 삭제 → 승인(승인 게이트 5) → squash 순으로만 진행한다.
 
 ## 왜
 
-머지 후엔 exec-plan이 역할을 다한다(작업이 develop에 박혔으니). 남겨두면 다음 작업과 섞여 drift가 된다 — 그래서 머지 시 삭제한다. 머지 전에 문서가 어긋나면 develop에 불일치가 박히므로 동기화를 먼저 확인한다.
+머지 후엔 exec-plan이 역할을 다한다(작업이 main에 박혔으니). 남겨두면 다음 작업과 섞여 drift가 된다 — 그래서 머지 시 삭제한다. 머지 전에 문서가 어긋나면 main에 불일치가 박히므로 동기화를 먼저 확인한다.
 
 ## 절차
 
@@ -20,8 +20,8 @@ description: "문서 동기화를 확인하고 exec-plan을 지운 뒤 PR을 squ
    - 어긋나면 머지를 멈추고 docs-sync를 먼저 권한다.
 3. **exec-plan 삭제** — 이 작업의 `docs/exec-plans/{slug}.md`를 삭제하고 그 삭제를 커밋(또는 PR 브랜치에 반영)한다. squash에 포함되게 한다.
 4. **승인(승인 게이트 5)** — 머지 방식(squash)·삭제할 exec-plan·대상 PR을 보여주고 승인받는다. 승인 전 머지하지 않는다.
-5. **머지** — `gh pr merge nn --squash --delete-branch` 실행(base는 `develop`). squash 커밋 메시지에 "🤖 Generated with Claude Code"·`Co-Authored-By:`를 **넣지 않는다**(글로벌 규칙).
-6. **로컬 정리** — `git switch develop && git pull && git branch -d <branch>`. 원격 브랜치는 `--delete-branch`로 정리됨.
+5. **머지** — `gh pr merge nn --squash --delete-branch` 실행(base는 `main`). squash 커밋 메시지에 "🤖 Generated with Claude Code"·`Co-Authored-By:`를 **넣지 않는다**(글로벌 규칙).
+6. **로컬 정리** — `git switch main && git pull && git branch -d <branch>`. 원격 브랜치는 `--delete-branch`로 정리됨. **로컬에 미커밋 변경이 있으면 머지 전에 커밋/스태시**해 후처리 checkout이 막히지 않게 한다.
 
 ## 규칙
 

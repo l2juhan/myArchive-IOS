@@ -23,7 +23,7 @@ PR 본문 형식을 스킬이 임의로 정하지 않는다. 리포의 PR 템플
 4. **변경 수집** — base 브랜치 기준으로 `git log {base}..HEAD --oneline`, `git diff --stat {base}..HEAD`로 커밋·변경 규모를 본다. 관련 이슈 번호·exec-plan slug를 찾는다. (base는 아래 "base 브랜치" 참조.)
 5. **라벨 결정** — 변경 성격으로 라벨을 정한다(아래 "라벨" 참조). 초안과 함께 제안한다.
 6. **본문 초안(승인 게이트 3)** — 템플릿 각 섹션을 실제 내용으로 채운다. **섹션을 빼거나 추가하지 않는다.** "관련 이슈"는 `closes #nn`, UI 변경이면 스크린샷 표를 채운다. 빈 섹션은 "해당 없음".
-7. **PR 생성(승인 게이트 4)** — 승인 후 `gh pr create --base develop --title ... --body ... --label ...` 실행. URL을 보고한다.
+7. **PR 생성(승인 게이트 4)** — 승인 후 `gh pr create --base main --title ... --body ... --label ...` 실행. URL을 보고한다.
 
 ## 라벨
 
@@ -37,7 +37,7 @@ PR 본문 형식을 스킬이 임의로 정하지 않는다. 리포의 PR 템플
 
 ## base 브랜치
 
-CLAUDE.md 분기 전략에 따라 **base는 `develop`**(main은 배포 전용)이다. 생성 전 `git branch -a`로 `develop` 존재를 확인하고, 없으면 `git switch -c develop && git push -u origin develop`(승인 후)으로 만들고 진행한다.
+CLAUDE.md 분기 전략에 따라 **base는 `main`**(단일 통합 브랜치)이다. 작업 브랜치(`feature/...`·`fix/...`·`chore/...`)에서 PR을 만들고, `main`에서 직접 PR을 만들지 않는다.
 
 ## 규칙
 
