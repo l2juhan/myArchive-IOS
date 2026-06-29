@@ -1,0 +1,59 @@
+name: myArchive
+options:
+  bundleIdPrefix: com.l2juhan
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  defaultConfig: Debug
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: ""
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  myArchive:
+    type: application
+    platform: iOS
+    sources:
+      - path: myArchive
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.l2juhan.myArchive
+        SDKROOT: iphoneos
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: true
+        # 라이트 모드 전용(PRD 6.4) — 다크 모드는 v1.1로 이관
+        INFOPLIST_KEY_UIUserInterfaceStyle: Light
+        # 선택적 Face ID 잠금(F-5)에 필요한 사용 목적 문자열
+        INFOPLIST_KEY_NSFaceIDUsageDescription: "앱 잠금을 켜면 Face ID로 빠르게 잠금을 해제합니다."
+        INFOPLIST_KEY_UILaunchScreen_Generation: true
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_USER_SCRIPT_SANDBOXING: false
+    preBuildScripts:
+      - name: SwiftLint
+        basedOnDependencyAnalysis: false
+        script: |
+          if command -v swiftlint >/dev/null 2>&1; then
+            swiftlint --quiet
+          else
+            echo "warning: SwiftLint 미설치 — 'brew install swiftlint' 권장"
+          fi
+
+  myArchiveTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: myArchiveTests
+    dependencies:
+      - target: myArchive
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.l2juhan.myArchiveTests
+        SDKROOT: iphoneos
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+        GENERATE_INFOPLIST_FILE: true

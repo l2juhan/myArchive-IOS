@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  build-test:
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app || sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install tools
+        run: brew install xcodegen swiftlint
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: SwiftLint
+        run: swiftlint lint --strict
+
+      - name: Resolve simulator destination
+        id: sim
+        run: |
+          DEST=$(xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE '\([0-9A-F-]{36}\)' | tr -d '()')
+          echo "udid=$DEST" >> "$GITHUB_OUTPUT"
+
+      - name: Build & test
+        run: |
+          xcodebuild -project myArchive.xcodeproj -scheme myArchive \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -resultBundlePath build/TestResults.xcresult \
+            clean test | xcpretty || xcodebuild -project myArchive.xcodeproj -scheme myArchive \
+            -destination "id=${{ steps.sim.outputs.udid }}" clean test
+
+      - name: Structural checks
+        run: bash __tests__/structural/structure-check.sh

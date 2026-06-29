@@ -1,0 +1,36 @@
+#!/bin/bash
+# pre-push 게이트 — push 시점.
+# 1) view-inventory를 코드에서 재생성해 커밋본과 어긋나면 차단(generated 신선도 강제).
+# 2) doc-sync-map 규칙으로 코드 변경 대비 갱신이 빠진 문서가 있으면 경고/차단.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 1
+
+fail=0
+
+# (1) generated 신선도 — view-inventory 재생성 후 diff
+if [ -x scripts/gen-view-inventory.sh ]; then
+  scripts/gen-view-inventory.sh > /tmp/view-inventory.new 2>/dev/null
+  if [ -f docs/generated/view-inventory.md ]; then
+    if ! diff -q docs/generated/view-inventory.md /tmp/view-inventory.new >/dev/null 2>&1; then
+      echo "[pre-push] docs/generated/view-inventory.md 가 코드와 어긋납니다." >&2
+      echo "           docs-sync(또는 scripts/gen-view-inventory.sh)로 재생성해 커밋하세요." >&2
+      fail=1
+    fi
+  fi
+fi
+
+# (2) doc-sync-map 규칙 — 변경 코드 패턴 대비 누락 문서 점검(경고 위주)
+range="origin/$(git rev-parse --abbrev-ref HEAD)..HEAD"
+changed=$(git diff --name-only "$range" 2>/dev/null || git diff --name-only HEAD~1..HEAD 2>/dev/null)
+warn() { echo "[pre-push][경고] $1" >&2; }
+
+echo "$changed" | grep -q '^myArchive/DesignSystem/' && \
+  ! echo "$changed" | grep -q 'docs/DESIGN_SYSTEM.md' && \
+  warn "DesignSystem 변경 — docs/DESIGN_SYSTEM.md 갱신을 확인하세요."
+echo "$changed" | grep -qE '^myArchive/(Models|Services/Keychain)' && \
+  ! echo "$changed" | grep -q 'docs/references/keychain-schema.md' && \
+  warn "모델/Keychain 변경 — docs/references/keychain-schema.md 갱신을 확인하세요."
+
+[ "$fail" -eq 1 ] && exit 1
+exit 0

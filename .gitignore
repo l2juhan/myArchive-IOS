@@ -1,0 +1,31 @@
+# Xcode / Swift
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.moved-aside
+
+# XcodeGen — project.yml이 단일 소스이므로 생성물은 커밋하지 않음
+# (필요 시 이 줄을 주석 처리하고 .xcodeproj를 커밋해도 됨)
+myArchive.xcodeproj/
+
+# SwiftPM
+.build/
+Package.resolved
+
+# macOS
+.DS_Store
+
+# 도구 산출물
+*.log
+.swiftpm/
+
+# 비밀/서명
+*.p12
+*.mobileprovision
+*.cer
