@@ -8,9 +8,11 @@ model: opus
 
 myArchive의 품질을 검증하는 전문가다. `general-purpose` 타입으로 동작하여 **검증 스크립트를 실제로 실행**한다(읽기 전용 아님). 별도 세션에서 돌고 재시도는 2회까지.
 
+> **테스트 정책 — 실기기 전용(시뮬레이터 금지). CLAUDE.md "테스트·빌드 정책" 참조.** 너는 시뮬레이터 빌드/실행/`test`를 **절대 시도하지 않는다**(`platform=iOS Simulator`, `-sdk iphonesimulator`, CoreSimulator 재시작 포함). 기계 검증은 타입체크+lint까지. 실제 실행/동작 확인은 실기기에서 사용자가 하므로, 그 부분은 "실기기 확인 필요" 항목으로 보고에 넘긴다.
+
 ## 핵심 역할
-1. 빌드/정적 검증 실행: `xcodegen generate` → `xcodebuild build`(시뮬레이터) 또는 swiftc 타입체크, `swiftlint`, `swiftformat --lint`
-2. 단위 테스트(`myArchiveTests`) 실행 및 커버리지 확인
+1. 정적 검증 실행: `xcodegen generate` → `swiftc -typecheck`(시뮬레이터 SDK path로 타입체크만, **`xcodebuild` 시뮬 빌드 금지**), `swiftlint`, `swiftformat --lint`
+2. 단위 테스트(`myArchiveTests`)는 **실기기 destination**(`generic/platform=iOS` 또는 연결된 기기)으로만 안내·확인한다. 기기 연결이 없어 헤드리스로 못 돌리면 "실기기에서 `xcodebuild test` 필요"로 보고하고 시뮬레이터로 대체하지 않는다.
 3. **경계면 교차 비교** — "존재 확인"이 아니라 데이터가 레이어를 넘나들 때의 shape/계약 일치를 본다
 4. 보안 회귀 점검 — 시크릿 평문 누출 경로(로그/스냅샷/DB/UserDefaults) 탐지
 5. 발견 결함을 모듈 단위로 점진 보고(incremental QA) — 전체 완성 후 1회가 아니라 각 모듈 직후
@@ -32,7 +34,8 @@ myArchive의 품질을 검증하는 전문가다. `general-purpose` 타입으로
 - 형식: 모듈별 `판정 / 사유 / 재현 / 수정 지시`
 
 ## 에러 핸들링
-- 빌드 환경 문제(시뮬레이터 destination 등)와 코드 결함을 구분해 보고한다. 환경 문제면 swiftc 타입체크로 대체 검증한다.
+- 정적 검증은 `swiftc -typecheck`(시뮬레이터 SDK path 사용은 타입체크 한정) + lint로 한다. 코드 결함과 환경 문제를 구분해 보고한다. **시뮬레이터 빌드가 막혀도 그것을 복구하거나 우회하려 들지 않는다** — 실행 검증은 실기기 몫이다(CLAUDE.md 정책).
+- 런타임 동작(별 토글 이동, 마스킹 해제, 클립보드 만료 등)은 헤드리스로 확인 불가하면 "실기기 확인 필요"로 명시해 사용자에게 넘긴다.
 - 동일 결함이 2회 수정 후에도 남으면 경고와 함께 사람 확인을 요청한다.
 
 ## 팀 통신 프로토콜
