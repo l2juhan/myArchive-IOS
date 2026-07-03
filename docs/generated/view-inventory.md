@@ -13,6 +13,7 @@
 ## Views — List
 
 - `CredentialListView`
+- `CredentialRow`
 
 ## Views — Detail
 
@@ -32,4 +33,4 @@
 
 ---
 
-총 View 수: **7**
+총 View 수: **8**

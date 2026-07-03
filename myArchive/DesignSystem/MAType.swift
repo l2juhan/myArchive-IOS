@@ -7,6 +7,7 @@ enum MAType {
     static let wordmark = Font.system(size: 30, weight: .heavy) // myArchive 헤더
     static let brand = Font.system(size: 24, weight: .heavy) // 마이아카이브(잠금)
     static let detailTitle = Font.system(size: 22, weight: .bold) // 상세 서비스명
+    static let emptyTitle = Font.system(size: 18, weight: .bold) // 빈 상태 제목(목록 2.2)
     static let sectionHeader = Font.system(size: 13, weight: .semibold)
     static let rowTitle = Font.system(size: 16, weight: .semibold)
     static let rowSubtitle = Font.system(size: 13, weight: .medium) // 타임스탬프
@@ -42,6 +43,9 @@ enum MASpacing {
     static let screenHorizontal: CGFloat = 20
     static let cardMargin: CGFloat = 16 // 14~16
     static let rowVertical: CGFloat = 12 // 11~14
+    static let rowHorizontal: CGFloat = 14 // 행 좌우 패딩(11~14)
+    static let sectionHeaderTop: CGFloat = 16 // 섹션 헤더 상(14~18)
+    static let sectionHeaderBottom: CGFloat = 7 // 섹션 헤더 하
     static let fieldRow: CGFloat = 12
     static let gap: CGFloat = 11 // 9~13
 }

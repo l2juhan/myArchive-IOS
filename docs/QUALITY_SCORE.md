@@ -8,14 +8,15 @@
 
 | 축 | 등급(A~F) | 비고 |
 | --- | --- | --- |
-| 가독성 | — | 최초 평가 전 |
-| 예측성 | — | |
-| 응집도 | — | |
-| 결합도 | — | |
-| 보안(시크릿 격리) | — | 시크릿 평문 누출 0이 BLOCK 기준 |
-| 디자인 충실도 | — | Design.md 대조 |
-| 빌드/lint/테스트 | — | green 필수 |
+| 가독성 | A | MARK 구획 + Design.md 절 참조 주석. `sectionHeader`/`card`/`emptyState`/`noResultState` 등 의도 드러나는 이름 |
+| 예측성 | A | `toggleFavorite`가 이름대로 `isFavorite`만 변경(updatedAt 불변). `filtered`/`sections` 순수 계산 프로퍼티 |
+| 응집도 | A | 목록 화면은 `CredentialListView`, 행은 `CredentialRow`로 분리. `HeaderHeightKey`는 파일-private |
+| 결합도 | A- | UI 표시 / 정렬·시간은 `CredentialSorter`·`RelativeTime`에 위임. 별 토글 `modelContext.save`만 View에서(단순 플래그, 허용) |
+| 보안(시크릿 격리) | A | 목록은 serviceName/타임스탬프만 표시. 시크릿·passwordRef 미노출. 누출 0 |
+| 디자인 충실도 | A | Design.md 2.2 / 스크린샷 02 픽셀 재현. 토큰 경유(하드코딩 없음) |
+| 빌드/lint/테스트 | A | 실기기 빌드 green · typecheck 0 · SwiftLint 0 · SwiftFormat 적용. (UI라 단위 테스트 우선순위 낮음 — TESTING.md) |
 
 ## 이력
 
+- 2026-07-02 — **#2 메인 목록 화면** 첫 기능 PR 평가. 전 축 A~A-, 기준 미달 없음(BLOCK 없음). 대상: `CredentialListView`·`CredentialRow`·`MAType`(토큰 4종 추가). QA: typecheck/SwiftLint 0·경계면 PASS. 실기기 빌드 BUILD SUCCEEDED. 참고: 첫 실행 CoreData "Application Support 없음→자동복구 성공" 로그는 무해(버그 아님).
 - (최초 평가 전) — 하네스 구축 단계. 앱 골격 typecheck 통과 · SwiftLint 클린 · SwiftFormat 적용 상태.
