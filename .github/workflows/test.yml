@@ -25,19 +25,15 @@ jobs:
       - name: SwiftLint
         run: swiftlint lint --strict
 
-      - name: Resolve simulator destination
-        id: sim
-        run: |
-          DEST=$(xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE '\([0-9A-F-]{36}\)' | tr -d '()')
-          echo "udid=$DEST" >> "$GITHUB_OUTPUT"
-
-      - name: Build & test
+      # 실기기 전용 테스트 정책(CLAUDE.md): CI는 시뮬레이터를 쓰지 않는다.
+      # runner엔 실기기가 없으므로 서명 없이 실기기 타깃(generic/platform=iOS)으로
+      # 컴파일 정합성만 검증한다. 동작/단위 테스트는 로컬 실기기에서 수행.
+      - name: Build (실기기 타깃, 서명 없음)
         run: |
           xcodebuild -project myArchive.xcodeproj -scheme myArchive \
-            -destination "id=${{ steps.sim.outputs.udid }}" \
-            -resultBundlePath build/TestResults.xcresult \
-            clean test | xcpretty || xcodebuild -project myArchive.xcodeproj -scheme myArchive \
-            -destination "id=${{ steps.sim.outputs.udid }}" clean test
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            clean build
 
       - name: Structural checks
         run: bash __tests__/structural/structure-check.sh

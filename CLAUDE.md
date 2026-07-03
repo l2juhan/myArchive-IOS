@@ -113,4 +113,5 @@ UI는 표시만, 값 처리는 Logic으로 모은다(경계 분리). 경계면(�
 - **기계 검증(에이전트/QA가 헤드리스로 하는 것)**: `swiftc -typecheck`(컴파일 정합성) + `swiftlint` + `swiftformat --lint` 까지만. **`xcodebuild`로 시뮬레이터 destination을 enumerate·빌드·`test` 하지 않는다.** `platform=iOS Simulator` destination, `-sdk iphonesimulator` 빌드, CoreSimulator 재시작 등 시뮬레이터 복구 시도도 금지.
 - **런타임·시각·동작 검증(실행이 필요한 것)**: **실기기**에서 사람이 Xcode로 수행한다(`▶ Run`/`⌘R`, destination = 연결된 iPhone). 빠른 시각 확인은 Xcode Canvas `#Preview`를 보조로 쓴다. QA는 여기까지 자동화하지 말고, 타입체크/lint 통과 후 "실기기 확인 필요" 항목으로 사용자에게 핸드오프한다.
 - **단위 테스트(`myArchiveTests`)** 도 실기기 destination(`platform=iOS,name=<연결된 기기>` 또는 `generic/platform=iOS`)으로 돌린다. 시뮬레이터 destination을 쓰지 않는다.
+- **CI(`.github/workflows/test.yml`)** 도 시뮬레이터를 쓰지 않는다. runner엔 실기기가 없으므로 서명 없이 실기기 타깃(`generic/platform=iOS`, `CODE_SIGNING_ALLOWED=NO`)으로 **빌드 + SwiftLint + 구조체크**만 검증한다(시뮬 `test` 없음). 동작·단위 테스트는 로컬 실기기 몫이다.
 - 배경: 로컬 Xcode가 신형 SDK(예: iOS 26.x) 기준이라 iOS 17 시뮬레이터 런타임이 없어 시뮬 빌드가 불안정하게 막힌다. 이를 우회하려 시뮬레이터를 깔거나 복구하는 대신 **실기기로만 간다.** 관련 함정은 메모리 `xcodegen-build-env`에 기록.
