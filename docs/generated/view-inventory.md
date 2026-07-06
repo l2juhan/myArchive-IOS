@@ -30,7 +30,11 @@
 ## Views — Components
 
 - `AvatarView`
+- `ColorPickerGrid`
+- `CustomFieldRow`
+- `DashedUnderline`
+- `PreviewHost`
 
 ---
 
-총 View 수: **8**
+총 View 수: **12**

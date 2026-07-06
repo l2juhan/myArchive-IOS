@@ -9,7 +9,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: 4XTGL2D5GF # Apple Development 팀 ID(실기기 서명) — 재생성해도 유지
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
 

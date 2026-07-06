@@ -37,6 +37,7 @@ enum MAColor {
     static let emptyStar = Color(hex: "#CFD3D2")
     static let success = Color(hex: "#1F9D6B") // 복사 성공 체크, 토스트 배지
     static let destructive = Color(hex: "#E5484D") // 삭제, 커스텀 필드 제거
+    static let destructiveBG = Color(hex: "#FDECEC") // 커스텀 필드 제거(−) 버튼 바탕
     static let toastSurface = Color(hex: "#1B2330") // 토스트 배경
     static let toastSub = Color(hex: "#AAB2C0")
 
