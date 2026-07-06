@@ -43,7 +43,9 @@
 - `MAToastModifier`
 - `MAToggle`
 - `PreviewHost`
+- `PrivacyShieldView`
+- `ShieldBrandIconView`
 
 ---
 
-총 View 수: **21**
+총 View 수: **23**
