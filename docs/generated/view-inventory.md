@@ -8,6 +8,7 @@
 
 ## Views — Lock
 
+- `BrandIconView`
 - `LockView`
 
 ## Views — List
@@ -45,4 +46,4 @@
 
 ---
 
-총 View 수: **20**
+총 View 수: **21**

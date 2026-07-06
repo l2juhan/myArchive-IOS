@@ -20,6 +20,7 @@ enum MAColor {
     static let fill = Color(hex: "#ECEEF2") // 검색 바, 기어 버튼
     static let fillPressed = Color(hex: "#DFE3EA")
     static let copyButtonBG = Color(hex: "#F1F3F7") // 복사 버튼 바탕
+    static let faceIDButtonBG = Color(hex: "#EAF1FC") // 잠금 화면 Face ID 트리거 원형 배경
     static let segmentTrack = Color(hex: "#E9EBF0") // 세그먼트 트랙
     static let chipBG = Color(hex: "#EEF0F4") // 타임스탬프 칩
 
