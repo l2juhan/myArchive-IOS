@@ -8,9 +8,12 @@ struct CredentialDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
+    @AppStorage(SettingsKey.clipboardExpirySec) private var clipboardExpirySec = ClipboardExpiry.sixty.rawValue
     @State private var vm: DetailViewModel
     @State private var isEditingPresented = false
     @State private var showDeleteDialog = false
+    @State private var showCopyToast = false
+    @State private var lastExpirySec = ClipboardExpiry.sixty.rawValue
 
     init(credential: Credential) {
         self.credential = credential
@@ -42,6 +45,11 @@ struct CredentialDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .tint(MAColor.interactiveText)
         .toolbar { toolbarContent }
+        .maToast(
+            isPresented: $showCopyToast,
+            title: "복사완료",
+            subtitle: DetailViewModel.copyToastSubtitle(seconds: lastExpirySec)
+        )
         .onDisappear { vm.resetReveal() }
         .sheet(isPresented: $isEditingPresented) {
             AddEditView(editing: vm.credential)
@@ -108,7 +116,8 @@ struct CredentialDetailView: View {
                 DetailFieldRow(
                     item: item,
                     isRevealed: vm.revealedFields.contains(item.id),
-                    onReveal: { vm.reveal(id: item.id) }
+                    onReveal: { vm.reveal(id: item.id) },
+                    onCopy: { copy(item) }
                 )
             }
         }
@@ -116,6 +125,14 @@ struct CredentialDetailView: View {
             RoundedRectangle(cornerRadius: MARadius.card, style: .continuous)
                 .fill(MAColor.card)
         )
+    }
+
+    // MARK: - 복사
+
+    private func copy(_ item: DetailViewModel.FieldItem) {
+        vm.copy(item: item, expirySec: clipboardExpirySec)
+        lastExpirySec = clipboardExpirySec
+        withAnimation(MAMotion.toast) { showCopyToast = true }
     }
 
     // MARK: - 삭제 버튼
@@ -151,6 +168,7 @@ private struct DetailFieldRow: View {
     let item: DetailViewModel.FieldItem
     let isRevealed: Bool
     let onReveal: () -> Void
+    let onCopy: () -> Void
 
     var body: some View {
         HStack(spacing: MASpacing.gap) {
@@ -162,7 +180,7 @@ private struct DetailFieldRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            CopyButton(action: {})
+            CopyButton(action: onCopy)
         }
         .padding(.horizontal, MASpacing.rowHorizontal)
         .padding(.vertical, MASpacing.rowVertical)
