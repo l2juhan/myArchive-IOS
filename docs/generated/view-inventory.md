@@ -18,6 +18,7 @@
 ## Views — Detail
 
 - `CredentialDetailView`
+- `DetailFieldRow`
 
 ## Views — AddEdit
 
@@ -31,6 +32,7 @@
 
 - `AvatarView`
 - `ColorPickerGrid`
+- `CopyButton`
 - `CustomFieldRow`
 - `DashedUnderline`
 - `MAConfirmDialog`
@@ -43,4 +45,4 @@
 
 ---
 
-총 View 수: **18**
+총 View 수: **20**
