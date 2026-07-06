@@ -179,12 +179,13 @@ struct AddEditView: View {
     private var favoriteSection: some View {
         section("즐겨찾기") {
             card {
-                Toggle(isOn: $vm.isFavorite) {
+                HStack(spacing: MASpacing.gap) {
                     Text("즐겨찾기")
                         .font(MAType.fieldValue)
                         .foregroundStyle(MAColor.ink)
+                    Spacer()
+                    MAToggle(isOn: $vm.isFavorite)
                 }
-                .tint(MAColor.primary)
                 .padding(.horizontal, MASpacing.rowHorizontal)
                 .padding(.vertical, MASpacing.rowVertical - 2)
             }

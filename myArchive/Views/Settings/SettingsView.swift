@@ -60,9 +60,7 @@ struct SettingsView: View {
                             .foregroundStyle(MAColor.secondary)
                     }
                     Spacer()
-                    Toggle("", isOn: $isAppLockEnabled)
-                        .labelsHidden()
-                        .tint(MAColor.primary)
+                    MAToggle(isOn: $isAppLockEnabled)
                 }
                 .padding(.horizontal, MASpacing.rowHorizontal)
                 .padding(.vertical, MASpacing.rowVertical)
