@@ -180,7 +180,9 @@ private struct DetailFieldRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            CopyButton(action: onCopy)
+            if item.kind != .error {
+                CopyButton(action: onCopy)
+            }
         }
         .padding(.horizontal, MASpacing.rowHorizontal)
         .padding(.vertical, MASpacing.rowVertical)
@@ -216,6 +218,15 @@ private struct DetailFieldRow: View {
             Text(item.value)
                 .font(MAType.fieldValue)
                 .foregroundStyle(MAColor.ink)
+        case .error:
+            HStack(spacing: 4) {
+                Image(systemName: "exclamationmark.circle")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(MAColor.secondary)
+                Text("값을 불러올 수 없어요")
+                    .font(MAType.fieldValue)
+                    .foregroundStyle(MAColor.secondary)
+            }
         }
     }
 }

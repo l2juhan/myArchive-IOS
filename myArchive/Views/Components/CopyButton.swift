@@ -24,7 +24,7 @@ struct CopyButton: View {
                 .clipShape(RoundedRectangle(cornerRadius: MARadius.copyButton, style: .continuous))
         }
         .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.2), value: isCopied)
+        .animation(MAMotion.reveal, value: isCopied)
         .accessibilityLabel(isCopied ? "복사됨" : "복사")
     }
 }

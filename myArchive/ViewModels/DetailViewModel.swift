@@ -11,6 +11,7 @@ final class DetailViewModel {
         case secret // blur 5px + 눈 힌트 아이콘
         case link // interactiveText 링크색, 블러 없음
         case plain // 일반 본문, 블러 없음
+        case error // Keychain 로드 실패 — 값 없음, 복사/마스킹 해제 불가
     }
 
     struct FieldItem: Identifiable {
@@ -37,14 +38,24 @@ final class DetailViewModel {
     init(credential: Credential) {
         self.credential = credential
         isFavorite = credential.isFavorite
-        // 비밀번호 조회
-        password = KeychainService.get(credential.passwordRef) ?? ""
+        // 비밀번호 조회 — nil은 Keychain 로드 실패로 보존(빈 값과 구분)
+        if let pw = KeychainService.get(credential.passwordRef) {
+            passwordLoaded = pw
+        } else {
+            passwordLoadFailed = true
+        }
         // 커스텀 필드 값 조회
         var vals: [UUID: String] = [:]
+        var failed: Set<UUID> = []
         for field in credential.customFields {
-            vals[field.id] = KeychainService.get(field.valueRef) ?? ""
+            if let val = KeychainService.get(field.valueRef) {
+                vals[field.id] = val
+            } else {
+                failed.insert(field.id)
+            }
         }
         customValues = vals
+        customLoadFailed = failed
     }
 
     // MARK: - 액션
@@ -61,7 +72,9 @@ final class DetailViewModel {
     }
 
     /// 필드 값 복사 — ClipboardService로 위임. 평문은 이 호출 이후 어디에도 보관하지 않는다.
+    /// .error 항목은 값이 없으므로 복사하지 않는다.
     func copy(item: FieldItem, expirySec: Int) {
+        guard item.kind != .error else { return }
         ClipboardService.copy(item.value, expiresInSeconds: expirySec)
     }
 
@@ -95,8 +108,10 @@ final class DetailViewModel {
 
     // MARK: - Private
 
-    @ObservationIgnored private var password: String
+    @ObservationIgnored private var passwordLoaded: String?
+    @ObservationIgnored private var passwordLoadFailed = false
     @ObservationIgnored private var customValues: [UUID: String] = [:]
+    @ObservationIgnored private var customLoadFailed: Set<UUID> = []
     @ObservationIgnored private var revealTimerTask: Task<Void, Never>?
 
     // 고정 행 id — 매 호출마다 새 UUID를 만들면 List 갱신 시 깜빡이므로 상수로 고정.
@@ -114,15 +129,21 @@ final class DetailViewModel {
         }
 
         // 비밀번호
-        if !password.isEmpty {
-            items.append(FieldItem(id: Self.passwordRowID, label: "비밀번호", value: password, kind: .secret))
+        if passwordLoadFailed {
+            items.append(FieldItem(id: Self.passwordRowID, label: "비밀번호", value: "", kind: .error))
+        } else if let pw = passwordLoaded, !pw.isEmpty {
+            items.append(FieldItem(id: Self.passwordRowID, label: "비밀번호", value: pw, kind: .secret))
         }
 
         // 커스텀 필드 (sortOrder 순)
         for field in credential.customFields.sorted(by: { $0.sortOrder < $1.sortOrder }) {
-            let val = customValues[field.id] ?? ""
-            if !val.isEmpty || !field.label.isEmpty {
-                items.append(FieldItem(id: field.id, label: field.label, value: val, kind: .secret))
+            if customLoadFailed.contains(field.id) {
+                items.append(FieldItem(id: field.id, label: field.label, value: "", kind: .error))
+            } else {
+                let val = customValues[field.id] ?? ""
+                if !val.isEmpty || !field.label.isEmpty {
+                    items.append(FieldItem(id: field.id, label: field.label, value: val, kind: .secret))
+                }
             }
         }
 
