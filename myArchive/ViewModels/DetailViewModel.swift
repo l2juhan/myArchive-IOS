@@ -60,6 +60,16 @@ final class DetailViewModel {
         try? context.save()
     }
 
+    /// 필드 값 복사 — ClipboardService로 위임. 평문은 이 호출 이후 어디에도 보관하지 않는다.
+    func copy(item: FieldItem, expirySec: Int) {
+        ClipboardService.copy(item.value, expiresInSeconds: expirySec)
+    }
+
+    /// 복사 토스트 subtitle 문구 — 순수 함수. "N초 후 자동 삭제".
+    static func copyToastSubtitle(seconds: Int) -> String {
+        "\(seconds)초 후 자동 삭제"
+    }
+
     /// 시크릿 필드 마스킹 해제 후 22초 자동 재마스킹 타이머를 (재)시작한다(PRD 6.2).
     @MainActor
     func reveal(id: UUID) {
