@@ -29,6 +29,9 @@ final class DetailViewModel {
     /// 빈 값 행은 포함하지 않는다.
     var fieldItems: [FieldItem] { buildFieldItems() }
 
+    /// 현재 마스킹이 해제된 시크릿 필드 id 집합. 22초 후 또는 화면 이탈 시 비운다(PRD 6.2).
+    private(set) var revealedFields: Set<UUID> = []
+
     // MARK: - 초기화 (표시 시점 시크릿 조회, PRD 6.1)
 
     init(credential: Credential) {
@@ -57,10 +60,34 @@ final class DetailViewModel {
         try? context.save()
     }
 
+    /// 시크릿 필드 마스킹 해제 후 22초 자동 재마스킹 타이머를 (재)시작한다(PRD 6.2).
+    @MainActor
+    func reveal(id: UUID) {
+        revealedFields.insert(id)
+        revealTimerTask?.cancel()
+        revealTimerTask = Task { [weak self] in
+            do {
+                try await Task.sleep(nanoseconds: 22_000_000_000)
+            } catch {
+                return // 취소(다른 필드 reveal·화면 이탈) 시 조용히 종료
+            }
+            self?.resetReveal()
+        }
+    }
+
+    /// 모든 마스킹을 되돌리고 타이머를 정리한다. 화면 이탈(onDisappear)에서도 호출.
+    @MainActor
+    func resetReveal() {
+        revealedFields.removeAll()
+        revealTimerTask?.cancel()
+        revealTimerTask = nil
+    }
+
     // MARK: - Private
 
     @ObservationIgnored private var password: String
     @ObservationIgnored private var customValues: [UUID: String] = [:]
+    @ObservationIgnored private var revealTimerTask: Task<Void, Never>?
 
     // 고정 행 id — 매 호출마다 새 UUID를 만들면 List 갱신 시 깜빡이므로 상수로 고정.
     private static let usernameRowID = UUID()
