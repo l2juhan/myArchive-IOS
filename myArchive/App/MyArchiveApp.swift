@@ -6,6 +6,7 @@ import SwiftUI
 struct MyArchiveApp: App {
     let container: ModelContainer
     private let lockController = AppLockController()
+    private let captureMonitor = ScreenCaptureMonitor()
 
     init() {
         do {
@@ -19,6 +20,7 @@ struct MyArchiveApp: App {
         WindowGroup {
             RootView()
                 .environment(lockController)
+                .environment(captureMonitor)
         }
         .modelContainer(container)
     }
