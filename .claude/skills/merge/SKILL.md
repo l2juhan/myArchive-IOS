@@ -9,7 +9,7 @@ description: "문서 동기화를 확인하고 exec-plan을 지운 뒤 PR을 squ
 
 ## 왜
 
-머지 후엔 exec-plan이 역할을 다한다(작업이 main에 박혔으니). 남겨두면 다음 작업과 섞여 drift가 된다 — 그래서 머지 시 삭제한다. 머지 전에 문서가 어긋나면 main에 불일치가 박히므로 동기화를 먼저 확인한다.
+머지 후엔 exec-plan이 역할을 다한다(작업이 main에 박혔으니). 남겨두면 다음 작업과 섞여 drift가 된다 — 그래서 **머지 전에** 삭제를 PR 브랜치에 반영해 squash 머지 커밋 안에서 함께 지운다. 머지 후 별도 커밋으로 지우면 삭제가 머지와 분리돼 이력이 지저분해지고 누락 위험이 생긴다. 머지 전에 문서가 어긋나면 main에 불일치가 박히므로 동기화를 먼저 확인한다.
 
 ## 절차
 
@@ -18,14 +18,17 @@ description: "문서 동기화를 확인하고 exec-plan을 지운 뒤 PR을 squ
    - `scripts/gen-view-inventory.sh`를 돌려 `docs/generated/view-inventory.md`와 diff가 없는지(신선도) 확인.
    - `.claude/doc-sync-map.json` 규칙으로 변경 코드 대비 누락 문서가 없는지 확인.
    - 어긋나면 머지를 멈추고 docs-sync를 먼저 권한다.
-3. **exec-plan 삭제** — 이 작업의 `docs/exec-plans/{slug}.md`를 삭제하고 그 삭제를 커밋(또는 PR 브랜치에 반영)한다. squash에 포함되게 한다.
-4. **승인(승인 게이트 5)** — 머지 방식(squash)·삭제할 exec-plan·대상 PR을 보여주고 승인받는다. 승인 전 머지하지 않는다.
+3. **exec-plan 삭제 (머지 전, PR 브랜치에 반영)** — 이 작업의 `docs/exec-plans/{slug}.md`를 **PR 브랜치 위에서** 지우고 push해, squash 머지 커밋에 삭제가 포함되게 한다.
+   - PR 브랜치를 checkout(로컬에 없으면 `gh pr checkout nn`) → `git rm docs/exec-plans/{slug}.md` → `git commit -m "chore: exec-plan #nn 삭제"` → `git push`.
+   - push로 CI가 다시 돌면 통과를 기다린 뒤 머지한다.
+   - **머지 후 main에서 별도 삭제 커밋을 만들지 않는다** — 삭제는 반드시 머지 안에 들어가야 한다(#13처럼 사후 삭제 금지).
+4. **승인(승인 게이트 5)** — 머지 방식(squash)·삭제한 exec-plan·대상 PR을 보여주고 승인받는다. 승인 전 머지하지 않는다.
 5. **머지** — `gh pr merge nn --squash --delete-branch` 실행(base는 `main`). squash 커밋 메시지에 "🤖 Generated with Claude Code"·`Co-Authored-By:`를 **넣지 않는다**(글로벌 규칙).
 6. **로컬 정리** — `git switch main && git pull && git branch -d <branch>`. 원격 브랜치는 `--delete-branch`로 정리됨. **로컬에 미커밋 변경이 있으면 머지 전에 커밋/스태시**해 후처리 checkout이 막히지 않게 한다.
 
 ## 규칙
 
 - 동기화 미확인 상태로 머지하지 않는다(pre-push를 우회하지 않는 것과 같은 원칙).
-- exec-plan 삭제는 머지의 일부다 — 빼먹으면 다음 작업의 pre-commit과 충돌한다.
+- exec-plan 삭제는 머지의 일부다 — **PR 브랜치에 push해 squash 커밋에 포함**시킨다. 빼먹으면 다음 작업의 pre-commit과 충돌한다. 머지 후 사후 삭제(별도 chore 커밋)는 금지.
 - 머지 후 후속 작업이 있으면 github-issue-work로 새 사이클을 시작한다.
 - 머지 도중 충돌·CI 실패 시 멈추고 사용자에게 보고한다.
