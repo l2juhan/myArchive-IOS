@@ -11,7 +11,6 @@ struct CredentialListView: View {
 
     @State private var query: String
     @State private var showingAdd = false
-    @State private var headerHeight: CGFloat = 0
 
     /// 검색어 초기값 주입(주로 #Preview 검색 0건 상태 재현용).
     init(query: String = "") {
@@ -37,48 +36,46 @@ struct CredentialListView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .top) {
-                MAColor.appBackground.ignoresSafeArea()
-
-                scrollContent
-                    .ignoresSafeArea(.container, edges: .top)
-
-                header
-                    .ignoresSafeArea(.container, edges: .top)
-            }
-            .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: UUID.self) { id in
-                if let cred = credentials.first(where: { $0.id == id }) {
-                    CredentialDetailView(credential: cred)
+            scrollContent
+                .background(MAColor.appBackground.ignoresSafeArea())
+                .safeAreaInset(edge: .top, spacing: 0) { header }
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(for: UUID.self) { id in
+                    if let cred = credentials.first(where: { $0.id == id }) {
+                        CredentialDetailView(credential: cred)
+                    }
                 }
-            }
-            .sheet(isPresented: $showingAdd) {
-                AddEditView()
-            }
+                .sheet(isPresented: $showingAdd) {
+                    AddEditView()
+                }
         }
         .tint(MAColor.interactiveText)
     }
 
     // MARK: - 본문
 
-    @ViewBuilder
+    /// 본문 — 최상위를 항상 ScrollView로 고정하고 내부에서만 상태를 분기한다.
+    /// (분기별로 최상위 뷰 타입이 바뀌면 헤더 검색 TextField가 재구성돼 포커스를 잃어
+    ///  결과 0건일 때 키보드가 사라진다. 컨테이너를 고정해 이를 막는다.)
     private var scrollContent: some View {
-        if credentials.isEmpty {
-            emptyState
-        } else if isSearching, filtered.isEmpty {
-            noResultState
-        } else {
-            ScrollView {
+        ScrollView {
+            if credentials.isEmpty {
+                emptyState
+                    .containerRelativeFrame(.vertical, alignment: .center)
+            } else if isSearching, filtered.isEmpty {
+                noResultState
+                    .containerRelativeFrame(.vertical, alignment: .center)
+            } else {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(sections, id: \.title) { section in
                         sectionHeader(section.title)
                         card(for: section.items)
                     }
                 }
-                .padding(.top, headerHeight)
                 .padding(.bottom, MASpacing.sectionHeaderTop)
             }
         }
+        .scrollDismissesKeyboard(.never)
     }
 
     private func sectionHeader(_ title: String) -> some View {
@@ -142,7 +139,7 @@ struct CredentialListView: View {
             }
         }
         .padding(.horizontal, MASpacing.screenHorizontal)
-        .padding(.top, MASpacing.headerTop)
+        .padding(.top, MASpacing.rowVertical)
         .padding(.bottom, MASpacing.rowVertical)
         .background(alignment: .bottom) {
             Rectangle()
@@ -150,12 +147,6 @@ struct CredentialListView: View {
                 .frame(height: 0.5)
         }
         .background(.ultraThinMaterial)
-        .background(
-            GeometryReader { proxy in
-                Color.clear.preference(key: HeaderHeightKey.self, value: proxy.size.height)
-            }
-        )
-        .onPreferenceChange(HeaderHeightKey.self) { headerHeight = $0 }
     }
 
     /// 기어/플러스 38원형 — Fill 배경 + 회색 아이콘(Design.md 2.2).
@@ -233,7 +224,7 @@ struct CredentialListView: View {
             .buttonStyle(.plain)
             .padding(.top, 4)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, MASpacing.screenHorizontal)
     }
 
@@ -247,8 +238,7 @@ struct CredentialListView: View {
                 .font(MAType.rowTitle)
                 .foregroundStyle(MAColor.secondary)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, headerHeight)
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, MASpacing.screenHorizontal)
     }
 
@@ -259,14 +249,6 @@ struct CredentialListView: View {
     private func toggleFavorite(_ cred: Credential) {
         cred.isFavorite.toggle()
         try? modelContext.save()
-    }
-}
-
-/// 고정 헤더 높이 측정 키 — 스크롤 본문 상단 인셋 계산용.
-private struct HeaderHeightKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }
 

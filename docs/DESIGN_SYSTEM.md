@@ -11,7 +11,7 @@ DesignSystem 코드는 `docs/references/Design.md` 1장의 확정값을 SwiftUI 
 | `DesignSystem/MAType.swift` (`MAType`) | 1.3 | 타이포 위계 |
 | `DesignSystem/MAType.swift` (`MARadius`/`MASpacing`) | 1.4 | 라운드·간격 |
 | `DesignSystem/MAType.swift` (`MAMotion`) | 1.5 | 모션 |
-| `DesignSystem/Color+Hex.swift` | — | HEX → Color 헬퍼 |
+| `DesignSystem/Color+Hex.swift` | — | HEX → Color 헬퍼 + `Color.toHex()`(커스텀 피커 색을 저장용 hex로) |
 
 ## 사용 규칙
 
@@ -29,4 +29,4 @@ DesignSystem 코드는 `docs/references/Design.md` 1장의 확정값을 SwiftUI 
 
 ## 핵심 토큰 빠른 참조
 
-Primary `#4647AE` · Interactive `#6D94C5` · Accent `#FF5722` · App BG `#E8EDF2` · Card `#FFFFFF` · Ink `#303841` · Success `#1F9D6B` · Destructive `#E5484D` · Toast `#1B2330`. 카드 radius 16 · Fill 12 · 아바타 12/17 · 모달 20.
+Primary `#4647AE` · Interactive `#6D94C5` · Accent `#FF5722` · App BG `#E8EDF2` · Card `#FFFFFF` · Ink `#303841` · Success `#1F9D6B` · Destructive `#E5484D`(제거 버튼 바탕 `destructiveBG #FDECEC`) · Toast `#1B2330`. 카드 radius 16 · Fill 12 · 아바타 12/17 · 모달 20.
