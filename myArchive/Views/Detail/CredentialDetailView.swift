@@ -42,6 +42,7 @@ struct CredentialDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .tint(MAColor.interactiveText)
         .toolbar { toolbarContent }
+        .onDisappear { vm.resetReveal() }
         .sheet(isPresented: $isEditingPresented) {
             AddEditView(editing: vm.credential)
         }
@@ -104,7 +105,11 @@ struct CredentialDetailView: View {
                         .frame(height: 0.5)
                         .padding(.leading, MASpacing.rowHorizontal)
                 }
-                DetailFieldRow(item: item)
+                DetailFieldRow(
+                    item: item,
+                    isRevealed: vm.revealedFields.contains(item.id),
+                    onReveal: { vm.reveal(id: item.id) }
+                )
             }
         }
         .background(
@@ -144,6 +149,8 @@ struct CredentialDetailView: View {
 /// 필드 카드 한 행 — 라벨 + 값(kind별 스타일) + 복사 버튼. Design.md 2.3.
 private struct DetailFieldRow: View {
     let item: DetailViewModel.FieldItem
+    let isRevealed: Bool
+    let onReveal: () -> Void
 
     var body: some View {
         HStack(spacing: MASpacing.gap) {
@@ -159,6 +166,10 @@ private struct DetailFieldRow: View {
         }
         .padding(.horizontal, MASpacing.rowHorizontal)
         .padding(.vertical, MASpacing.rowVertical)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if item.kind == .secret, !isRevealed { onReveal() }
+        }
     }
 
     @ViewBuilder
@@ -169,12 +180,15 @@ private struct DetailFieldRow: View {
                 .font(MAType.secretValue)
                 .foregroundStyle(MAColor.ink)
                 .lineLimit(1)
-                .blur(radius: 5)
+                .blur(radius: isRevealed ? 0 : 5)
                 .overlay(alignment: .trailing) {
-                    Image(systemName: "eye")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(MAColor.secondary)
+                    if !isRevealed {
+                        Image(systemName: "eye")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(MAColor.secondary)
+                    }
                 }
+                .animation(MAMotion.reveal, value: isRevealed)
         case .link:
             Text(item.value)
                 .font(MAType.fieldValue)
