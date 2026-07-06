@@ -5,12 +5,13 @@ import SwiftUI
 /// 잠금이 꺼져 있으면(기본값) 바로 목록으로 진입(PRD 10.2).
 struct RootView: View {
     @AppStorage(SettingsKey.isAppLockEnabled) private var isAppLockEnabled = false
-    @State private var isUnlocked = false
+    @Environment(AppLockController.self) private var lockController
 
     var body: some View {
-        Group {
-            if isAppLockEnabled, !isUnlocked {
-                LockView(isUnlocked: $isUnlocked)
+        @Bindable var lockController = lockController
+        return Group {
+            if isAppLockEnabled, !lockController.isUnlocked {
+                LockView(isUnlocked: $lockController.isUnlocked)
             } else {
                 CredentialListView()
             }
@@ -21,4 +22,5 @@ struct RootView: View {
 
 #Preview {
     RootView()
+        .environment(AppLockController())
 }

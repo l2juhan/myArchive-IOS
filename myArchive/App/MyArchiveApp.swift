@@ -5,6 +5,7 @@ import SwiftUI
 @main
 struct MyArchiveApp: App {
     let container: ModelContainer
+    private let lockController = AppLockController()
 
     init() {
         do {
@@ -17,6 +18,7 @@ struct MyArchiveApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environment(lockController)
         }
         .modelContainer(container)
     }
