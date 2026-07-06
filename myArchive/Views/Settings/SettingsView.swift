@@ -92,7 +92,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: isAppLockEnabled)
+        .animation(MAMotion.reveal, value: isAppLockEnabled)
     }
 
     private var clipboardSection: some View {
