@@ -18,5 +18,6 @@
 
 ## 이력
 
+- 2026-07-07 — **#17 단위 테스트 보강** 평가(테스트 3파일: `KeychainServiceTests` 신규 + `CredentialSorterTests`·`DetailViewModelTests` 보강). 전 축 A~A- 유지, BLOCK 없음. **가독성** A(MARK 구획 + PRD 절 참조 주석, `setOrSkip`/`makeKey`/`makeViewModel` 의도 드러나는 헬퍼) · **예측성** A(값 계약 단정, 부작용 없음) · **응집도** A(대상별 파일 분리) · **결합도** A(순수 로직·값 계약만 검증, UI 미접촉) · **보안** A(시크릿 더미만, 실 사용자 값 0, `touchedKeys`+tearDown로 Keychain 잔여 0) · **빌드/lint/테스트** A(typecheck error0/warning0 · SwiftLint 0 · SwiftFormat 적용; 실기기 실행·Keychain 라운드트립은 XCTSkip host 가드로 사용자 핸드오프). 정직성: `CredentialSorter` tie-break 미구현 사실을 과단정 없이 집합 검증 + 주석으로 기록((c) 결정).
 - 2026-07-02 — **#2 메인 목록 화면** 첫 기능 PR 평가. 전 축 A~A-, 기준 미달 없음(BLOCK 없음). 대상: `CredentialListView`·`CredentialRow`·`MAType`(토큰 4종 추가). QA: typecheck/SwiftLint 0·경계면 PASS. 실기기 빌드 BUILD SUCCEEDED. 참고: 첫 실행 CoreData "Application Support 없음→자동복구 성공" 로그는 무해(버그 아님).
 - (최초 평가 전) — 하네스 구축 단계. 앱 골격 typecheck 통과 · SwiftLint 클린 · SwiftFormat 적용 상태.
