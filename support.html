@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>myArchive 지원</title>
+<style>
+  :root { --fg:#1c1c1e; --muted:#6b6b70; --accent:#4a4ae0; --line:#e5e5ea; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard",Segoe UI,Roboto,sans-serif;
+         color:var(--fg); line-height:1.7; background:#fff; }
+  .wrap { max-width:720px; margin:0 auto; padding:48px 20px 80px; }
+  header { border-bottom:1px solid var(--line); padding-bottom:20px; margin-bottom:28px; }
+  h1 { font-size:1.75rem; margin:0 0 6px; }
+  .sub { color:var(--muted); font-size:.9rem; margin:0; }
+  h2 { font-size:1.15rem; margin:32px 0 10px; }
+  p, li { font-size:1rem; }
+  ul { padding-left:1.2em; }
+  a { color:var(--accent); }
+  .box { background:#f7f7fa; border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:20px 0; }
+  dt { font-weight:600; margin-top:16px; }
+  dd { margin:4px 0 0; color:var(--fg); }
+  footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+  nav a { margin-right:16px; font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>myArchive 지원</h1>
+    <p class="sub">로컬 전용 · 오프라인 비밀번호 보관함</p>
+  </header>
+
+  <div class="box">
+    문의는 아래 이메일로 보내주세요. 최대한 빠르게 답변드리겠습니다.<br>
+    <strong><a href="mailto:leejuhan0527@gmail.com">leejuhan0527@gmail.com</a></strong>
+  </div>
+
+  <h2>자주 묻는 질문</h2>
+  <dl>
+    <dt>데이터는 어디에 저장되나요?</dt>
+    <dd>모든 정보는 사용자의 iPhone 안(iOS Keychain 및 기기 로컬 저장소)에만 저장됩니다.
+        서버로 전송되거나 클라우드에 동기화되지 않습니다.</dd>
+
+    <dt>비밀번호를 잊었을 때 복구할 수 있나요?</dt>
+    <dd>앱은 계정이 없으며 데이터가 기기에만 있으므로, 개발자가 대신 복구해 드릴 수 없습니다.
+        중요한 정보는 별도로 백업해 두시길 권장합니다.</dd>
+
+    <dt>앱 잠금은 어떻게 동작하나요?</dt>
+    <dd>설정에서 앱 잠금을 켜면 기기의 Face ID 또는 패스코드로 잠금을 해제합니다.
+        별도의 비밀번호나 계정은 필요하지 않습니다.</dd>
+
+    <dt>기기를 바꾸면 데이터가 옮겨지나요?</dt>
+    <dd>앱은 클라우드 동기화를 하지 않습니다. 데이터는 기기 안에만 있으므로,
+        새 기기에서는 직접 다시 입력하셔야 합니다.</dd>
+
+    <dt>인터넷 연결이 필요한가요?</dt>
+    <dd>아니요. myArchive는 완전한 오프라인으로 동작합니다.</dd>
+  </dl>
+
+  <h2>문의</h2>
+  <p>버그 신고, 기능 제안, 기타 문의:
+     <a href="mailto:leejuhan0527@gmail.com">leejuhan0527@gmail.com</a></p>
+
+  <footer>
+    <nav><a href="./index.html">개인정보처리방침</a><a href="./support.html">지원</a></nav>
+    © 2026 이주한 · myArchive
+  </footer>
+</div>
+</body>
+</html>
