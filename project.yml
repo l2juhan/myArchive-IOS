@@ -19,19 +19,29 @@ targets:
     platform: iOS
     sources:
       - path: myArchive
+    # 물리 Info.plist를 XcodeGen이 생성한다(재생성해도 유지). 배포용 키
+    # ITSAppUsesNonExemptEncryption을 진짜 불리언(<false/>)으로 박기 위해
+    # GENERATE_INFOPLIST_FILE(합성) 대신 info.properties를 쓴다.
+    info:
+      path: myArchive/Info.plist
+      properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        # 라이트 모드 전용(PRD 6.4) — 다크 모드는 v1.1로 이관
+        UIUserInterfaceStyle: Light
+        # 선택적 Face ID 잠금(F-5)에 필요한 사용 목적 문자열
+        NSFaceIDUsageDescription: "앱 잠금을 켜면 Face ID로 빠르게 잠금을 해제합니다."
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        # 암호화 수출규정 면제: Keychain(OS 내장 암호화)만 사용 → 비면제 암호화 없음
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.l2juhan.myArchive
         SDKROOT: iphoneos
         SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
         TARGETED_DEVICE_FAMILY: "1"
-        GENERATE_INFOPLIST_FILE: true
-        # 라이트 모드 전용(PRD 6.4) — 다크 모드는 v1.1로 이관
-        INFOPLIST_KEY_UIUserInterfaceStyle: Light
-        # 선택적 Face ID 잠금(F-5)에 필요한 사용 목적 문자열
-        INFOPLIST_KEY_NSFaceIDUsageDescription: "앱 잠금을 켜면 Face ID로 빠르게 잠금을 해제합니다."
-        INFOPLIST_KEY_UILaunchScreen_Generation: true
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_USER_SCRIPT_SANDBOXING: false
     preBuildScripts:
