@@ -17,7 +17,7 @@ DesignSystem 코드는 `docs/references/Design.md` 1장의 확정값을 SwiftUI 
 
 - 색·폰트·라운드·간격·모션을 **하드코딩하지 않는다.** 반드시 토큰을 경유한다.
 - 새 값이 필요하면: ① Design.md에 있으면 그 값으로 토큰 추가, ② 없으면 가장 가까운 토큰 재사용 후 exec-plan에 질문.
-- 폰트는 시스템(SF Pro / Apple SD Gothic Neo)으로 대체하되 size/weight 위계 유지. 시크릿 값은 모노스페이스(`MAType.secretValue`).
+- 폰트는 시스템(SF Pro / Apple SD Gothic Neo)으로 대체하되 size/weight 위계 유지. 시크릿 값도 나머지 텍스트와 동일한 시스템 폰트(`MAType.secretValue`, 모노스페이스 미사용).
 - 라이트 모드 전용. 다크 모드 색 분기를 넣지 않는다(v1.1 이관).
 
 ## 아바타 색 규칙 (F-15)
