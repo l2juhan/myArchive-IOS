@@ -2,7 +2,7 @@ import SwiftUI
 
 /// 타이포그래피 토큰 — Design.md 1.3.
 /// 폰트는 시스템(SF Pro / Apple SD Gothic Neo)으로 대체하되 size/weight 위계를 따른다.
-/// 시크릿 값·비밀번호 입력은 모노스페이스로 표시한다.
+/// 시크릿 값·비밀번호 입력도 나머지 텍스트와 동일한 시스템 폰트로 표시한다(모노스페이스 미사용).
 enum MAType {
     static let wordmark = Font.system(size: 30, weight: .heavy) // myArchive 헤더
     static let brand = Font.system(size: 24, weight: .heavy) // 마이아카이브(잠금)
@@ -20,8 +20,8 @@ enum MAType {
     static let toastSub = Font.system(size: 12, weight: .medium)
     static let caption = Font.system(size: 12, weight: .medium)
 
-    /// 시크릿 값(아이디·비밀번호·커스텀)은 모노스페이스.
-    static let secretValue = Font.system(size: 16, weight: .medium, design: .monospaced)
+    /// 시크릿 값(아이디·비밀번호·커스텀) — 나머지 텍스트와 동일한 시스템 폰트.
+    static let secretValue = Font.system(size: 16, weight: .medium)
 }
 
 /// 라운드 / 간격 토큰 — Design.md 1.4.
