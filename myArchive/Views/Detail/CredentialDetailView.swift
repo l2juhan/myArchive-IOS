@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 
-/// 상세 화면 — 아이덴티티 + 필드 카드(시크릿 블러 + 눈 힌트) + 필드별 복사 + 삭제. Design.md 2.3.
+/// 상세 화면 — 아이덴티티 + 필드 카드(시크릿 블러 + 탭 해제) + 필드별 복사 + 삭제. Design.md 2.3.
 /// 값 처리는 DetailViewModel로 위임하고 여기서는 표시·전이만 담당한다.
 struct CredentialDetailView: View {
     let credential: Credential
@@ -201,13 +201,6 @@ private struct DetailFieldRow: View {
                 .foregroundStyle(MAColor.ink)
                 .lineLimit(1)
                 .blur(radius: isRevealed ? 0 : 5)
-                .overlay(alignment: .trailing) {
-                    if !isRevealed {
-                        Image(systemName: "eye")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(MAColor.secondary)
-                    }
-                }
                 .animation(MAMotion.reveal, value: isRevealed)
         case .link:
             Text(item.value)
